@@ -58,7 +58,6 @@ parts:
       - libx11-dev
       - libxkbfile-dev
       - libsecret-1-dev
-      - ripgrep
     override-build: |
       # install the official nodejs so we get the expected npm version
       if [ $SNAP_ARCH == "amd64" ]; then
