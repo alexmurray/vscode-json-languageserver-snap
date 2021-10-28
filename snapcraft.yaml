@@ -1,0 +1,82 @@
+name: vscode-json-languageserver
+version: 1.3.4
+summary: JSON Language Server
+description: |
+  The JSON Language server provides language-specific smarts for editing,
+  validating and understanding JSON documents. It runs as a separate
+  executable and implements the language server protocol to be connected by
+  any code editor or IDE.
+
+  The server implements the following capabilities of the language server protocol:
+
+  * Code completion for JSON properties and values based on the document's
+    JSON schema or based on existing properties and values used at other
+    places in the document. JSON schemas are configured through the server
+    configuration options.
+  * Hover for values based on descriptions in the document's JSON schema.
+  * Document Symbols for quick navigation to properties in the document.
+  * Document Colors for showing color decorators on values representing
+    colors and Color Presentation for color presentation information to
+    support color pickers. The location of colors is defined by the
+    document's JSON schema. All values marked with "format": "color-hex"
+    (VSCode specific, non-standard JSON Schema extension) are considered
+    color values. The supported color formats are #rgb[a] and #rrggbb[aa].
+  * Code Formatting supporting ranges and formatting the whole document.
+  * Folding Ranges for all folding ranges in the document.
+  * Semantic Selection for semantic selection for one or multiple cursor
+    positions.
+  * Goto Definition for $ref references in JSON schemas
+  * Diagnostics (Validation) are pushed for all open documents
+    * syntax errors
+    * structural validation based on the document's JSON schema.
+
+grade: stable
+confinement: strict
+base: core20
+
+layout:
+  /usr/local/share/.config/yarn:
+    bind: $SNAP/usr/local/share/.config/yarn
+
+apps:
+  vscode-json-languageserver:
+    command: bin/vscode-json-languageserver
+    plugs:
+      - network
+      - home
+
+parts:
+  vscode-json-languageserver:
+    plugin: npm
+    source: https://github.com/microsoft/vscode.git
+    npm-node-version: 16.13.0
+    # add packages so we can npm install on vscode itself as it's node
+    # dependecies are needed to compile the json-languageserver
+    build-packages:
+      - pkg-config
+      - python
+      - libx11-dev
+      - libxkbfile-dev
+      - libsecret-1-dev
+    override-build: |
+      # install the official nodejs so we get the expected npm version
+      if [ $SNAP_ARCH == "amd64" ]; then
+        ARCH=x64
+      elif [ $SNAP_ARCH == "armhf" ]; then
+        ARCH=armv7l
+      elif [ $SNAP_ARCH == "ppc64el" ]; then
+        ARCH=ppc64le
+      else
+        ARCH=$SNAP_ARCH
+      fi
+      curl -s https://nodejs.org/dist/v16.13.0/node-v16.13.0-linux-$ARCH.tar.gz | tar xzf - -C "$SNAPCRAFT_PART_INSTALL" --strip-components=1
+      npm install -g yarn
+      yarn install
+      cd extensions/json-language-features/server
+      yarn run compile
+      yarn global add --prefix $SNAPCRAFT_PART_INSTALL $(yarn pack . | grep "Wrote tarball to" | cut -f2 -d'"')
+      # fixup install location
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/local/share/.config
+      mv /usr/local/share/.config/yarn $SNAPCRAFT_PART_INSTALL/usr/local/share/.config
+      rm $SNAPCRAFT_PART_INSTALL/bin/vscode-json-languageserver
+      ln -s ../usr/local/share/.config/yarn/global/node_modules/.bin/vscode-json-languageserver $SNAPCRAFT_PART_INSTALL/bin/vscode-json-languageserver
