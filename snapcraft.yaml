@@ -75,17 +75,11 @@ parts:
       npm install -g yarn
       # vscode-ripgrep fails to install behind https proxy -
       # https://github.com/microsoft/vscode-ripgrep/issues/26 - and we
-      # don't need it anyway for the server - same for electron
+      # don't need it anyway for the server - same for playwright and
+      # electron
       jq 'del(.dependencies."vscode-ripgrep")' package.json | sponge package.json
-      jq 'del(.dependencies."vscode-ripgrep")' remote/package.json | sponge remote/package.json
+      jq 'del(.devDependencies.electron)' package.json | sponge package.json
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
-      # workaround for build.snapcraft.io builds
-      # https://bugs.launchpad.net/bugs/1886861
-      if [ -n "${http_proxy:-}" ]; then
-        export ELECTRON_GET_USE_PROXY=1
-        export GLOBAL_AGENT_HTTP_PROXY="${http_proxy}"
-        export GLOBAL_AGENT_HTTPS_PROXY="${http_proxy}"
-      fi
       yarn install --debug
       cd extensions/json-language-features/server
       yarn run compile
