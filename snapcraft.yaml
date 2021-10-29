@@ -59,6 +59,7 @@ parts:
       - libxkbfile-dev
       - libsecret-1-dev
       - jq
+      - moreutils
     override-build: |
       # install the official nodejs so we get the expected npm version
       if [ $SNAP_ARCH == "amd64" ]; then
