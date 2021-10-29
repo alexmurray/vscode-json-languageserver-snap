@@ -78,10 +78,10 @@ parts:
       # don't need it anyway for the server - same for electron
       jq 'del(.dependencies."vscode-ripgrep")' package.json | sponge package.json
       jq 'del(.dependencies."vscode-ripgrep")' remote/package.json | sponge remote/package.json
-      jq 'del(.devDependencies.electron)' package.json | sponge package.json
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
-      yarn install --verbose
+      yarn install
       cd extensions/json-language-features/server
+      yarn install
       yarn run compile
       yarn global add --prefix $SNAPCRAFT_PART_INSTALL $(yarn pack . | grep "Wrote tarball to" | cut -f2 -d'"')
       # fixup install location
