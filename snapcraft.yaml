@@ -79,7 +79,14 @@ parts:
       jq 'del(.dependencies."vscode-ripgrep")' package.json | sponge package.json
       jq 'del(.dependencies."vscode-ripgrep")' remote/package.json | sponge remote/package.json
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
-      yarn install
+      # workaround for build.snapcraft.io builds
+      # https://bugs.launchpad.net/bugs/1886861
+      if [ -n "$http_proxy" ]; then
+        export ELECTRON_GET_USE_PROXY=1
+        export GLOBAL_AGENT_HTTP_PROXY="${http_proxy}"
+        export GLOBAL_AGENT_HTTPS_PROXY="${http_proxy}"
+      fi
+      yarn install --no-lockfile
       cd extensions/json-language-features/server
       yarn install
       yarn run compile
