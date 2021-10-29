@@ -58,6 +58,7 @@ parts:
       - libx11-dev
       - libxkbfile-dev
       - libsecret-1-dev
+      - jq
     override-build: |
       # install the official nodejs so we get the expected npm version
       if [ $SNAP_ARCH == "amd64" ]; then
@@ -73,8 +74,9 @@ parts:
       npm install -g yarn
       # vscode-ripgrep fails to install behind https proxy -
       # https://github.com/microsoft/vscode-ripgrep/issues/26 - and we
-      # don't need it anyway for the server
-      sed -i '/vscode-ripgrep/d' package.json
+      # don't need it anyway for the server - same for electron
+      jq 'del(.dependencies."vscode-ripgrep")' package.json | sponge package.json
+      jq 'del(.devDependencies.electron)' package.json | sponge package.json
       yarn install
       cd extensions/json-language-features/server
       yarn run compile
