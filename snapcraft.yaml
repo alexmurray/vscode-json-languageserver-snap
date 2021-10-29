@@ -79,7 +79,7 @@ parts:
       jq 'del(.dependencies."vscode-ripgrep")' package.json | sponge package.json
       jq 'del(.devDependencies.electron)' package.json | sponge package.json
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
-      yarn install
+      yarn install --verbose
       cd extensions/json-language-features/server
       yarn run compile
       yarn global add --prefix $SNAPCRAFT_PART_INSTALL $(yarn pack . | grep "Wrote tarball to" | cut -f2 -d'"')
