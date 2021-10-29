@@ -81,12 +81,12 @@ parts:
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
       # workaround for build.snapcraft.io builds
       # https://bugs.launchpad.net/bugs/1886861
-      if [ -n "$http_proxy" ]; then
+      if [ -n "${http_proxy:-}" ]; then
         export ELECTRON_GET_USE_PROXY=1
         export GLOBAL_AGENT_HTTP_PROXY="${http_proxy}"
         export GLOBAL_AGENT_HTTPS_PROXY="${http_proxy}"
       fi
-      yarn install --no-lockfile
+      yarn install
       cd extensions/json-language-features/server
       yarn install
       yarn run compile
