@@ -73,7 +73,7 @@ parts:
       npm install -g yarn
       # use non-https registry server to try avoid https/http proxy issues
       # on LP builders
-      yarn config set npmRegistryServer http://registry.npmjs.org/
+      yarn config set registry http://registry.npmjs.org/
       yarn install
       cd extensions/json-language-features/server
       yarn run compile
