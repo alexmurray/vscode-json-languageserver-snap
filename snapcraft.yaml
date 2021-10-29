@@ -59,6 +59,9 @@ parts:
       - libxkbfile-dev
       - libsecret-1-dev
     override-build: |
+      # use a newer version of https-proxy-agent to allow to build on LP
+      # which employs a proxy - https://github.com/npm/cli/issues/2003
+      sed -i 's/"https-proxy-agent": "^2.2.3",/"https-proxy-agent": "^5.0.0",/' package.json
       # install the official nodejs so we get the expected npm version
       if [ $SNAP_ARCH == "amd64" ]; then
         ARCH=x64
