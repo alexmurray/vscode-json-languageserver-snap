@@ -76,8 +76,12 @@ parts:
       # vscode-ripgrep fails to install behind https proxy -
       # https://github.com/microsoft/vscode-ripgrep/issues/26 - and we
       # don't need it anyway for the server - same for playwright and
-      # electron
+      # electron - also remove vscode-telemetry-extractor since this pulls
+      # in vscode-ripgrep as a dependency too and is also not needed to
+      # build the vscode-json-languageserver extension so is safe to remove
       jq 'del(.dependencies."vscode-ripgrep")' package.json | sponge package.json
+      jq 'del(.dependencies."vscode-ripgrep")' remote/package.json | sponge remote/package.json
+      jq 'del(.devDependencies."vscode-telemetry-extractor")' package.json | sponge package.json
       jq 'del(.devDependencies.electron)' package.json | sponge package.json
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
       yarn install --debug
