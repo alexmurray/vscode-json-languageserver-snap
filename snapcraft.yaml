@@ -96,6 +96,5 @@ parts:
       # fixup install location
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/local/share/.config
       mv /usr/local/share/.config/yarn $SNAPCRAFT_PART_INSTALL/usr/local/share/.config
-      rm $SNAPCRAFT_PART_INSTALL/bin/vscode-json-languageserver
-      ln -s ../usr/local/share/.config/yarn/global/node_modules/.bin/vscode-json-languageserver $SNAPCRAFT_PART_INSTALL/bin/vscode-json-languageserver
+      for bin in vscode-json-languageserver node-gyp; do rm $SNAPCRAFT_PART_INSTALL/bin/$bin; ln -s ../usr/local/share/.config/yarn/global/node_modules/.bin/$bin $SNAPCRAFT_PART_INSTALL/bin/$bin; done
       snapcraftctl set-version $(jq -r .version package.json)
