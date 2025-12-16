@@ -32,7 +32,7 @@ description: |
 adopt-info: vscode-json-languageserver
 grade: stable
 confinement: strict
-base: core20
+base: core24
 
 apps:
   vscode-json-languageserver:
@@ -43,18 +43,17 @@ apps:
 
 parts:
   vscode-json-languageserver:
-    plugin: npm
+    plugin: nil
     source: https://github.com/microsoft/vscode.git
     build-environment:
       - NODEJS_VERSION: "v22.21.1"
-    npm-node-version: $NODEJS_VERSION
     # add packages so we can npm install on vscode itself as it's node
     # dependecies are needed to compile the json-languageserver
     build-packages:
-      - gcc-10
-      - g++-10
+      - gcc
+      - g++
       - pkg-config
-      - python
+      - python3
       - libkrb5-dev
       - libx11-dev
       - libxkbfile-dev
@@ -73,11 +72,6 @@ parts:
         ARCH=$SNAP_ARCH
       fi
       curl -s https://nodejs.org/dist/"${NODEJS_VERSION}"/node-"${NODEJS_VERSION}"-linux-$ARCH.tar.gz | tar xzf - -C "$SNAPCRAFT_PART_INSTALL" --strip-components=1
-      # ensure we use gcc/g++-10 rather than 9 so when we compile node-gyp later
-      # it doesn't fail with errors like "g++: error: unrecognized command line
-      # option ‘-std=gnu++20’; did you mean ‘-std=gnu++2a’"
-      export CC=gcc-10
-      export CXX=g++-10
       # @vscode/ripgrep fails to install behind https proxy as vscode-ripgrep
       # did - https://github.com/microsoft/vscode-ripgrep/issues/26 - and we
       # don't need it anyway for the server - same for playwright and electron -
@@ -89,6 +83,7 @@ parts:
       jq 'del(.devDependencies."@vscode/telemetry-extractor")' package.json | sponge package.json
       jq 'del(.devDependencies.electron)' package.json | sponge package.json
       jq 'del(.devDependencies.playwright)' package.json | sponge package.json
+      export PATH=$SNAPCRAFT_PART_INSTALL/bin:$PATH
       npm install -g node-gyp
       npm install
       cd extensions/json-language-features/server
