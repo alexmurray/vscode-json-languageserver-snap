@@ -34,6 +34,11 @@ grade: stable
 confinement: strict
 base: core24
 
+# various dependencies limit to only amd64 and arm64
+platforms:
+  amd64:
+  arm64:
+
 apps:
   vscode-json-languageserver:
     command: bin/vscode-json-languageserver
