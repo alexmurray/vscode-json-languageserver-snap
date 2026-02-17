@@ -51,7 +51,7 @@ parts:
     plugin: nil
     source: https://github.com/microsoft/vscode.git
     build-environment:
-      - NODEJS_VERSION: "v24.13.1"
+      - NODEJS_VERSION: "v22.21.1"
     # add packages so we can npm install on vscode itself as it's node
     # dependecies are needed to compile the json-languageserver
     build-packages:
