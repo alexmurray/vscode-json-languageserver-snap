@@ -77,7 +77,7 @@ parts:
       else
         ARCH=$SNAP_ARCH
       fi
-      curl -s https://nodejs.org/dist/"${NODEJS_FIXED_VERSION_22}"/node-"${NODEJS_FIXED_VERSION_22}}"-linux-$ARCH.tar.gz | tar xzf - -C "$SNAPCRAFT_PART_INSTALL" --strip-components=1
+      curl -s https://nodejs.org/dist/"${NODEJS_FIXED_VERSION_22}"/node-"${NODEJS_FIXED_VERSION_22}"-linux-$ARCH.tar.gz | tar xzf - -C "$SNAPCRAFT_PART_INSTALL" --strip-components=1
       # @vscode/ripgrep fails to install behind https proxy as vscode-ripgrep
       # did - https://github.com/microsoft/vscode-ripgrep/issues/26 - and we
       # don't need it anyway for the server - same for playwright and electron -
